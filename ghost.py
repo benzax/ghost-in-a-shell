@@ -1,8 +1,6 @@
 import random
 
 def ghost():
-  print "here we go:"
-
   dictionary = open('dictionary.txt');
   trie = {}
   for line in dictionary:
@@ -19,25 +17,6 @@ def ghost():
         curr[char] = {}
       curr = curr[char]
 
-  print len(str(trie))
-  #for key in trie:
-  #  print key + "  " + str(trie[key])
-  #
-  #indent = 0
-  #for char in str(trie):
-  #  print char,
-  #  if char == " ":
-  #    continue
-  #  if char == ",":
-  #    print "\n" + (indent-4)*" ",
-  #  if char == "{":
-  #    print "\n" + indent*" ",
-  #    indent += 2
-  #  if char == "}":
-  #    indent -= 2
-  #    print "\n" + (indent-2)*" ",
-  #print ""
-  #
   letters = ""
   current = trie
 
@@ -134,7 +113,7 @@ def superghost():
           print "choices are " + str(appends[letters])
           print "okay, my turn, I'll add the letter " + opponent_letter
           letters += opponent_letter
-        else:
+        else: # will fail to prepend if it tried to append instead
           print "huh, I guess I challenge?"
           break
 
@@ -147,4 +126,17 @@ def superghost():
   #print str(histogram)
   #print str(len(appends)) + ", " + str(len(prepends))
  
-superghost()
+print "Welcome to Ghost.  Enter h for help, g to play Ghost, or anything",
+print "else to play Superghost."
+
+choice = raw_input("> ")
+
+if choice == "h":
+  print "Ghost is a word game in which players alternate turns adding one",
+  print "letter at a time to build a word.  The player to first complete",
+  print "a word, loses.  Superghost differs in that players may choose ",
+  print "between adding to the end or the beginning of the word."
+elif choice == "g":
+  ghost()
+else:
+  superghost()
