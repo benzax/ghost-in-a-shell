@@ -1,5 +1,49 @@
 import random
 
+# compute the edit distance between two words,
+# We need to identify the dictionary word which is closest to the word
+# provided by the user.  Ideally we can also classify their word as a
+# prefixed / suffixed version, a misspelling, or unheard of.
+def edit_distance(w, word):
+
+  # distance[i][j] will contain the edit distance between the first i
+  # letters of w and the first j letters of word
+  distance = [ [0]*len(word) for i in xrange(0, len(w))]
+  for i in xrange(1, len(w)):
+    distance[i][0] = i
+  for j in xrange(1, len(word)):
+    distance[0][j] = j
+
+  for i in xrange(1, len(w)):
+    for j in xrange(1, len(word)):
+      if w[i] == word[j]:
+        distance[i][j] = distance[i-1][j-1]
+      else:
+        distance[i][j] = min(
+          1 + distance[i-1][j-1],
+          1 + distance[i][j-1],
+          1 + distance[i-1][j]
+        )
+  return distance[-1][-1]
+
+def challenge(letters, words):
+  print "Alright, I challenge.  What was your word?"
+  word = raw_input("> ")
+  if letters not in word:
+    print "That doesn't actually contain the letters we had."
+  else:
+    min_distance = 1000 # probably should be maxint
+    min_word = ""
+    for w in words:
+      distance = edit_distance(w, word)
+      if distance < min_distance:
+        min_distance = distance
+        min_word = w
+    if min_distance < 3:
+      print "You mean something like " + min_word + "?"
+    else:
+      print "The closest word I know is " + min_word
+
 def ghost():
   dictionary = open('dictionary.txt');
   trie = {}
@@ -55,8 +99,9 @@ def superghost():
   for line in dictionary:
     #print line,
     word = line[0:-1]
-    if len(word) > 3:
-      words[word] = 1
+    if len(word) < 4:
+      continue
+    words[word] = 1
     for i in range(0, len(word)):
       for j in range(i, len(word)):
         if word[i+1:j+1] in prepends:
@@ -83,15 +128,28 @@ def superghost():
       elif len(letter) > 2:
         print "just one letter please"
         continue
+      if letter == "?":
+        print "ah, you challenge?"
+        while letters not in words:
+          if letters in prepends:
+            letters = random.choice(tuple(prepends[letters])) + letters
+          elif letters in appends:
+            letters = letters + random.choice(tuple(appends[letters]))
+          else:
+            print "actually, I'm stumped"
+        print "how about: " + letters
+        break
       if prepend:
         if letters not in prepends or letter not in prepends[letters]:
           print "not legal"
+          challenge(letter + letters, words)
           break
         else:
           letters = letter + letters
       else:
         if letters not in appends or letter not in appends[letters]:
           print "not legal"
+          challenge(letters + letter, words)
           break
         else:
           letters += letter
