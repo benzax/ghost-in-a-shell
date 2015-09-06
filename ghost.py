@@ -39,7 +39,7 @@ def challenge(letters, words):
       if distance < min_distance:
         min_distance = distance
         min_word = w
-    if min_distance < 3:
+    if min_distance < 2:
       print "You mean something like " + min_word + "?"
     else:
       print "The closest word I know is " + min_word
@@ -114,12 +114,14 @@ def superghost():
             appends[word[i:j]].add(word[j])
         else:
           appends[word[i:j]] = { word[j] }        
- 
+
+  print "Alright, let's play Superghost.  Type a letter once and then enter"
+  print "to append it, or twice to prepend it.  Enter ? to challenge, or !"
+  print "to cheat and get my suggestions."
+  
   while (1):
     letters = ""
     while (1):
-      if letters in appends:
-        print str(appends[letters])
       letter = raw_input("> "+ letters)
       prepend = False
       if len(letter) == 2:
@@ -139,6 +141,12 @@ def superghost():
             print "actually, I'm stumped"
         print "how about: " + letters
         break
+      if letter == "!":
+        if letters in prepends:
+          print str(prepends[letters])
+        if letters in appends:
+          print str(appends[letters])
+        continue
       if prepend:
         if letters not in prepends or letter not in prepends[letters]:
           print "not legal"
@@ -158,20 +166,21 @@ def superghost():
         print "that's a word"
         break
       else:
-        if random.randint(0,1) and letters in prepends:
+        if (letters in prepends and
+            (letters not in appends or random.randint(0,1))):
           opponent_letter = random.choice(tuple(prepends[letters]))
-          print "prepending to " + letters
-          print "choices are " + str(prepends[letters])
+          #print "prepending to " + letters
+          #print "choices are " + str(prepends[letters])
           print "okay, my turn, I'll add the letter " + opponent_letter,
-          print " to the beginning"
+          print "to the beginning"
           letters = opponent_letter + letters
         elif letters in appends:
           opponent_letter = random.choice(tuple(appends[letters]))
-          print "appending to " + letters
-          print "choices are " + str(appends[letters])
+          #print "appending to " + letters
+          #print "choices are " + str(appends[letters])
           print "okay, my turn, I'll add the letter " + opponent_letter
           letters += opponent_letter
-        else: # will fail to prepend if it tried to append instead
+        else:
           print "huh, I guess I challenge?"
           break
 
