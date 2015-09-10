@@ -8,21 +8,21 @@ def edit_distance(w, word):
 
   # distance[i][j] will contain the edit distance between the first i
   # letters of w and the first j letters of word
-  distance = [ [0]*len(word) for i in xrange(0, len(w))]
-  for i in xrange(1, len(w)):
+  distance = [ [0]*(len(word)+1) for i in xrange(0, len(w)+1)]
+  for i in xrange(1, len(w)+1):
     distance[i][0] = i
-  for j in xrange(1, len(word)):
+  for j in xrange(1, len(word)+1):
     distance[0][j] = j
 
-  for i in xrange(1, len(w)):
-    for j in xrange(1, len(word)):
+  for i in xrange(0, len(w)):
+    for j in xrange(0, len(word)):
       if w[i] == word[j]:
-        distance[i][j] = distance[i-1][j-1]
+        distance[i+1][j+1] = distance[i][j]
       else:
-        distance[i][j] = min(
-          1 + distance[i-1][j-1],
-          1 + distance[i][j-1],
-          1 + distance[i-1][j]
+        distance[i+1][j+1] = min(
+          1 + distance[i][j],
+          1 + distance[i+1][j],
+          1 + distance[i][j+1]
         )
   return distance[-1][-1]
 
@@ -113,8 +113,8 @@ def superghost():
           if word[j] not in appends[word[i:j]]:
             appends[word[i:j]].add(word[j])
         else:
-          appends[word[i:j]] = { word[j] }        
-
+          appends[word[i:j]] = { word[j] }
+    
   print "Alright, let's play Superghost.  Type a letter once and then enter"
   print "to append it, or twice to prepend it.  Enter ? to challenge, or !"
   print "to cheat and get my suggestions."
