@@ -26,23 +26,43 @@ def edit_distance(w, word):
         )
   return distance[-1][-1]
 
-def challenge(letters, words):
+def bk_tree_insert(root, word):
+  distance = edit_distance(root[0], word)
+  if distance == 0: # word is already inserted
+    return
+  if distance not in root:
+    root[distance] = {0: word}
+  else:
+    bk_tree_insert(root[distance], word)
+
+def bk_tree_lookup(root, word, slack):
+  if isinstance(root, str):
+    if edit_distance(root, word) <= slack:
+      return [root]
+    else:
+      return []
+  else:
+    distance = edit_distance(root[0], word)
+    matches = []
+    for i in range(distance - slack, distance + slack + 1):
+      if i in root:
+        matches.extend(bk_tree_lookup(root[i], word, slack))
+    return matches
+
+def challenge(letters, bk_root):
   print "Alright, I challenge.  What was your word?"
   word = raw_input("> ")
   if letters not in word:
     print "That doesn't actually contain the letters we had."
   else:
-    min_distance = 1000 # probably should be maxint
-    min_word = ""
-    for w in words:
-      distance = edit_distance(w, word)
-      if distance < min_distance:
-        min_distance = distance
-        min_word = w
-    if min_distance < 2:
-      print "You mean something like " + min_word + "?"
-    else:
-      print "The closest word I know is " + min_word
+    if letters in bk_tree_lookup(bk_root, word, 0):
+      print "oh, I guess that works"
+    for slack in range(1, 6):
+      matches = bk_tree_lookup(bk_root, word, slack)
+      if len(matches) > 0:
+        print "the closest word I can come up with is " + matches[0]
+        return
+    print "yeah, I don't know any word remotely like that"
 
 def ghost():
   dictionary = open('dictionary.txt');
@@ -96,6 +116,7 @@ def superghost():
   prepends = {}
   words = {}
   histogram = [0]*40
+  bk_tree_root = {0: "dictionary"} # arbitrary root node choice
   for line in dictionary:
     #print line,
     word = line[0:-1]
@@ -114,6 +135,7 @@ def superghost():
             appends[word[i:j]].add(word[j])
         else:
           appends[word[i:j]] = { word[j] }
+    bk_tree_insert(bk_tree_root, word)
     
   print "Alright, let's play Superghost.  Type a letter once and then enter"
   print "to append it, or twice to prepend it.  Enter ? to challenge, or !"
@@ -150,14 +172,14 @@ def superghost():
       if prepend:
         if letters not in prepends or letter not in prepends[letters]:
           print "not legal"
-          challenge(letter + letters, words)
+          challenge(letter + letters, bk_tree_root)
           break
         else:
           letters = letter + letters
       else:
         if letters not in appends or letter not in appends[letters]:
           print "not legal"
-          challenge(letters + letter, words)
+          challenge(letters + letter, bk_tree_root)
           break
         else:
           letters += letter
