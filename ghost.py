@@ -168,7 +168,7 @@ def superghost():
     bk_tree_insert(bk_tree_root, word)
     
   print "Alright, let's play Superghost.  Type a letter once and then enter"
-  print "to append it, or twice to prepend it.  Enter ? to challenge, or !"
+  print "to append it, or twice to prepend it.  Enter ! to challenge, or ?"
   print "to cheat and get my suggestions."
   
   while (1):
@@ -182,7 +182,7 @@ def superghost():
       elif len(letter) > 2:
         print "just one letter please"
         continue
-      if letter == "?":
+      if letter == "!":
         print "ah, you challenge?"
         while letters not in words:
           if letters in prepends:
@@ -193,7 +193,7 @@ def superghost():
             print "actually, I'm stumped"
         print "how about: " + letters
         break
-      if letter == "!":
+      if letter == "?":
         if letters in prepends:
           print str(prepends[letters])
         if letters in appends:
