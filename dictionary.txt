@@ -27352,11 +27352,6 @@ fry
 fryer
 fryers
 frying
-ft
-ftp
-ftpers
-ftping
-ftps
 fuchsia
 fuchsias
 fuck
@@ -30078,10 +30073,6 @@ gutting
 guttural
 gutturals
 gutty
-guv
-guvnor
-guvnors
-guvs
 guy
 guyed
 guying
@@ -30889,7 +30880,6 @@ hazing
 hazings
 hazmat
 hazy
-hdqrs
 he
 head
 headache
@@ -54330,9 +54320,6 @@ razzed
 razzes
 razzing
 razzmatazz
-rcpt
-rd
-re
 reabsorb
 reabsorbed
 reabsorbing
