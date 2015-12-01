@@ -1,1 +1,7 @@
-This project implements the word game ghost, for play against a computer.
+This project implements the word game Lexicant (superghost), for play against a computer.  See https://en.wikipedia.org/wiki/Lexicant
+
+Usage:
+$ python ghost.py
+
+Note that ghost is currently written in python 2, and not compatible with python 3.
+The wordlist is generated via SCOWL (http://wordlist.aspell.net/), with fairly generous parameters and some manual pruning of entries which I thought really weren't words.
