@@ -35,6 +35,16 @@ def bk_tree_insert(root, word):
   else:
     bk_tree_insert(root[distance], word)
 
+# should change to a flag in bk_tree_insert
+def bk_tree_insert_lazy(root, word):
+  distance = edit_distance(root[0], word)
+  if distance == 0: # word is already inserted
+    return
+  if distance not in root:
+    root[distance] = [word]
+  else:
+    root[distance].append(word)
+
 def bk_tree_lookup(root, word, slack):
   if isinstance(root, str):
     if edit_distance(root, word) <= slack:
@@ -47,6 +57,25 @@ def bk_tree_lookup(root, word, slack):
     for i in range(distance - slack, distance + slack + 1):
       if i in root:
         matches.extend(bk_tree_lookup(root[i], word, slack))
+    return matches
+
+def bk_tree_lookup_lazy(root, word, slack):
+  if isinstance(root, list):
+    words = root
+    root = {0: words[0]}
+    for word in words[1:]:
+      bk_tree_insert_lazy(root, word) 
+  if isinstance(root, str):
+    if edit_distance(root, word) <= slack:
+      return [root]
+    else:
+      return []
+  else:
+    distance = edit_distance(root[0], word)
+    matches = []
+    for i in range(distance - slack, distance + slack + 1):
+      if i in root:
+        matches.extend(bk_tree_lookup_lazy(root[i], word, slack))
     return matches
 
 def challenge(letters, bk_root):
@@ -117,6 +146,7 @@ def superghost():
   words = {}
   histogram = [0]*40
   bk_tree_root = {0: "dictionary"} # arbitrary root node choice
+  print "Please wait a moment while I process the dictionary"
   for line in dictionary:
     #print line,
     word = line[0:-1]
@@ -229,3 +259,22 @@ elif choice == "g":
   ghost()
 else:
   superghost()
+
+
+def test_bk_tree():
+  bk_tree_root = {0: "dictionary"}
+  print bk_tree_lookup_lazy(bk_tree_root, "dictionary", 0)
+  print bk_tree_lookup_lazy(bk_tree_root, "diction", 0)
+  bk_tree_insert_lazy(bk_tree_root, "diction")
+  print str(bk_tree_root)
+  bk_tree_insert_lazy(bk_tree_root, "diction")
+  bk_tree_insert_lazy(bk_tree_root, "fiction")
+  bk_tree_insert_lazy(bk_tree_root, "action")
+  bk_tree_insert_lazy(bk_tree_root, "discretionary")
+  print str(bk_tree_root)
+  print bk_tree_lookup_lazy(bk_tree_root, "diction", 0)
+  print str(bk_tree_root)
+  print bk_tree_lookup_lazy(bk_tree_root, "depiction", 0)
+  print str(bk_tree_root)
+  print bk_tree_lookup_lazy(bk_tree_root, "depiction", 2)
+  print str(bk_tree_root)
